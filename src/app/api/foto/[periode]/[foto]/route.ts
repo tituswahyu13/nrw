@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import sharp from "sharp";
 import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -33,40 +32,15 @@ export async function GET(
     }
 
     const arrayBuffer = await upstreamRes.arrayBuffer();
-    const inputBuffer = Buffer.from(arrayBuffer);
 
-    const { searchParams } = new URL(request.url);
-    const widthParam = searchParams.get("w");
-    const width = widthParam ? parseInt(widthParam, 10) : null;
-
-    if (width && width > 50 && width <= 1600) {
-      const resizedBuffer = await sharp(inputBuffer)
-        .rotate()
-        .resize({ width, withoutEnlargement: true })
-        .jpeg({ quality: 80, progressive: true })
-        .toBuffer();
-
-      return new NextResponse(new Uint8Array(resizedBuffer), {
-        headers: {
-          "Content-Type": "image/jpeg",
-          "Cache-Control": "private, max-age=604800, stale-while-revalidate=2592000",
-        },
-      });
-    }
-
-    const orientedBuffer = await sharp(inputBuffer)
-      .rotate()
-      .jpeg({ quality: 90, progressive: true })
-      .toBuffer();
-
-    return new NextResponse(new Uint8Array(orientedBuffer), {
+    return new NextResponse(arrayBuffer, {
       headers: {
         "Content-Type": "image/jpeg",
         "Cache-Control": "private, max-age=604800, stale-while-revalidate=2592000",
       },
     });
   } catch (err) {
-    console.error("Error fetching or processing photo:", err);
+    console.error("Error fetching photo:", err);
     return new NextResponse("Internal server error", { status: 500 });
   }
 }
