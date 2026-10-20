@@ -57,7 +57,7 @@ export default function PhotoLightbox({ pelanggan, initialIndex, onClose }: Phot
   };
 
   const photoUrl = currentRek
-    ? `/api/foto/${currentRek.periode}/${encodeURIComponent(currentRek.foto)}`
+    ? `/nrw/api/foto/${currentRek.periode}/${encodeURIComponent(currentRek.foto)}`
     : "";
 
   return (

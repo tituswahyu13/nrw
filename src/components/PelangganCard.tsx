@@ -138,7 +138,7 @@ function MeterMonthCard({
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
 
-  const thumbUrl = `/api/foto/${rekening.periode}/${encodeURIComponent(rekening.foto)}?w=360`;
+  const thumbUrl = `/nrw/api/foto/${rekening.periode}/${encodeURIComponent(rekening.foto)}?w=360`;
 
   return (
     <div
