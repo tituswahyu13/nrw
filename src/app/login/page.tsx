@@ -1,10 +1,36 @@
 "use client";
 
-import { useActionState } from "react";
+import { useFormState, useFormStatus } from "react-dom";
 import { loginAction } from "@/app/actions";
 
+function SubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      style={{
+        marginTop: "8px",
+        padding: "12px",
+        borderRadius: "8px",
+        background: pending ? "rgba(2, 132, 199, 0.5)" : "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
+        border: "none",
+        color: "#ffffff",
+        fontSize: "14px",
+        fontWeight: "700",
+        cursor: pending ? "not-allowed" : "pointer",
+        boxShadow: "0 6px 16px rgba(2, 132, 199, 0.35)",
+        transition: "all 0.15s ease"
+      }}
+    >
+      {pending ? "Memverifikasi..." : "Masuk ke Aplikasi"}
+    </button>
+  );
+}
+
 export default function LoginPage() {
-  const [state, formAction, isPending] = useActionState(loginAction, undefined);
+  const [state, formAction] = useFormState(loginAction, undefined);
 
   return (
     <main style={{
@@ -136,25 +162,7 @@ export default function LoginPage() {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={isPending}
-            style={{
-              marginTop: "8px",
-              padding: "12px",
-              borderRadius: "8px",
-              background: isPending ? "rgba(2, 132, 199, 0.5)" : "linear-gradient(135deg, #0284c7 0%, #0369a1 100%)",
-              border: "none",
-              color: "#ffffff",
-              fontSize: "14px",
-              fontWeight: "700",
-              cursor: isPending ? "not-allowed" : "pointer",
-              boxShadow: "0 6px 16px rgba(2, 132, 199, 0.35)",
-              transition: "all 0.15s ease"
-            }}
-          >
-            {isPending ? "Memverifikasi..." : "Masuk ke Aplikasi"}
-          </button>
+          <SubmitButton />
         </form>
 
         <div style={{ textAlign: "center", marginTop: "24px", fontSize: "11px", color: "#64748b" }}>

@@ -2,16 +2,18 @@ import { NextRequest, NextResponse } from "next/server";
 import sharp from "sharp";
 import { getCurrentUser } from "@/lib/auth";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ periode: string; foto: string }> }
+  { params }: { params: { periode: string; foto: string } }
 ) {
   const user = await getCurrentUser();
   if (!user) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const { periode, foto } = await params;
+  const { periode, foto } = params;
 
   if (!/^\d{6}$/.test(periode) || !/^[0-9A-Za-z._-]+$/.test(foto)) {
     return new NextResponse("Invalid parameters", { status: 400 });
@@ -24,7 +26,6 @@ export async function GET(
   try {
     const upstreamRes = await fetch(targetUrl, {
       cache: "force-cache",
-      next: { revalidate: 86400 * 30 }, // 30 days
     });
 
     if (!upstreamRes.ok) {
@@ -40,7 +41,7 @@ export async function GET(
 
     if (width && width > 50 && width <= 1600) {
       const resizedBuffer = await sharp(inputBuffer)
-        .rotate() // auto-orient from EXIF
+        .rotate()
         .resize({ width, withoutEnlargement: true })
         .jpeg({ quality: 80, progressive: true })
         .toBuffer();
@@ -53,7 +54,6 @@ export async function GET(
       });
     }
 
-    // Auto-orient original JPEG as well
     const orientedBuffer = await sharp(inputBuffer)
       .rotate()
       .jpeg({ quality: 90, progressive: true })

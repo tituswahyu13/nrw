@@ -7,7 +7,7 @@ import { sessionOptions, SessionData, defaultSession } from "./session";
 import { AuthUser } from "./types";
 
 export async function getSession() {
-  const cookieStore = await cookies();
+  const cookieStore = cookies();
   const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
   if (!session.isLoggedIn) {
     session.isLoggedIn = defaultSession.isLoggedIn;

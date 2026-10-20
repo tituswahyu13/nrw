@@ -1,34 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "SIMPADU · Monitoring Meter Air & Foto Pelanggan",
   description: "Aplikasi monitoring data pelanggan dan foto meteran air 5 bulan terakhir SIMPADU PDAM",
-  robots: {
-    index: false,
-    follow: false,
-    nocache: true,
-  },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="id" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="id" className={inter.className}>
       <body>{children}</body>
     </html>
   );
