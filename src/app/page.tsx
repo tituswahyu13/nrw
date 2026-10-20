@@ -1,69 +1,45 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
+import { getWilayah, searchPelanggan } from "@/lib/queries";
+import DashboardClient from "@/components/DashboardClient";
 
-export default function Home() {
+export const instant = false;
+
+interface PageProps {
+  searchParams: Promise<{
+    no_pdam?: string;
+    kel?: string;
+    rw?: string;
+    page?: string;
+  }>;
+}
+
+export default async function HomePage(props: PageProps) {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/login");
+  }
+
+  const sp = await props.searchParams;
+  const noPdam = (sp.no_pdam || "").trim();
+  const kel = sp.kel ? parseInt(sp.kel, 10) : null;
+  const rw = sp.rw ? parseInt(sp.rw, 10) : null;
+  const page = sp.page ? Math.max(1, parseInt(sp.page, 10)) : 1;
+
+  const [kelurahanList, searchResult] = await Promise.all([
+    getWilayah(),
+    searchPelanggan(noPdam, kel, rw, page),
+  ]);
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <DashboardClient
+      user={user}
+      kelurahanList={kelurahanList}
+      searchResult={searchResult}
+      noPdam={noPdam}
+      kel={kel}
+      rw={rw}
+      page={page}
+    />
   );
 }

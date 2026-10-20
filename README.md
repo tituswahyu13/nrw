@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SIMPADU · Monitoring Meter Air & Foto Pelanggan
 
-## Getting Started
+Aplikasi web terpisah dari SIMPADU lama untuk memantau data pelanggan dan riwayat foto meteran air 5 bulan terakhir.
 
-First, run the development server:
+## Teknologi
+- **Framework**: Next.js 16.4 (App Router) + React 19 + TypeScript
+- **Database**: MySQL2 (koneksi ke database SIMPADU 192.168.8.11, sesi dipaksa `READ ONLY`)
+- **Image Processing**: Sharp (proxy foto meter dengan auto-orientasi EXIF, kompresi JPEG, dan resize thumbnail)
+- **Authentication**: `iron-session` (terenkripsi, membaca tabel `SPD_USER` dengan verifikasi Bcrypt resmi SIMPADU)
+- **Styling**: Modern CSS dengan tema Glassmorphism Dark Mode yang responsif untuk desktop dan HP
+
+## Fitur Utama
+1. **Sistem Login Resmi**: Petugas login menggunakan username & password SIMPADU yang sudah ada.
+2. **Filter Fleksibel**:
+   - Pencarian berdasarkan No. PDAM
+   - Dropdown Kelurahan (23 Kelurahan di SIMPADU)
+   - Dropdown RW dinamis yang menyesuaikan Kelurahan yang dipilih
+3. **Kartu Pelanggan**:
+   - Informasi lengkap: No. PDAM, Nama, Alamat, Golongan, Status (Aktif / Tutup).
+   - Gallery 5 Periode Rekening Terakhir:
+     - Foto meteran air asli yang diambil petugas lapangan
+     - Stand meter terbaca
+     - Pemakaian bulanan ($m^3$)
+     - Keterangan status bacaan meter (Normal, Macet, Kunci, Buram, dll.)
+     - Tanggal & jam pencatatan meter
+4. **Interactive Photo Lightbox**:
+   - Klik thumbnail foto untuk membuka tampilan layar penuh
+   - Navigasi bulan sebelumnya / selanjutnya langsung di dalam modal
+   - Kontrol Zoom (+ / -) dan Rotasi 90°
+   - Tautan langsung untuk membuka foto resolusi asli
+
+## Menjalankan Aplikasi
 
 ```bash
+cd /Users/tituswahyu/Documents/script/simpadu-meter-viewer
+
+# Mode Development
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Mode Production
+npm run build
+npm run start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Aplikasi aktif pada port 3000: `http://localhost:3000` (atau `http://<IP-LAN>:3000`).
